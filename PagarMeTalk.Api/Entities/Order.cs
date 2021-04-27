@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Newtonsoft.Json;
 using PagarMeTalk.Api.Entities.Enum;
 using System;
 using System.Collections.Generic;
@@ -13,7 +12,7 @@ namespace PagarMeTalk.Api.Entities
         public long TotalInCents { get; private set; }
         public long TotalPaidInCents { get; private set; }
         public EOrderStatus Status { get; private set; }
-        public List<Item> Items { get; set; }
+        public List<Item> Items { get; private set; }
 
         public Order()
         {
@@ -26,7 +25,7 @@ namespace PagarMeTalk.Api.Entities
         {
             ValidateTotalInCents();
             ValidateTotalPaidInCents();
-            
+
             AddErrors(Validate(this));
             return ValidationResult.IsValid;
         }
@@ -127,10 +126,11 @@ namespace PagarMeTalk.Api.Entities
         {
             RuleFor(p => p.TotalPaidInCents)
                 .GreaterThanOrEqualTo(0)
-                .When(p => p.Status != EOrderStatus.Pending && p.Status != EOrderStatus.Canceled);
+                .When(p => p.Status == EOrderStatus.Paid || p.Status == EOrderStatus.Overpaid || p.Status == EOrderStatus.Underpaid);
         }
 
         private bool IsClosed() => Status == EOrderStatus.WaitingPayment;
+
         private bool IsPending() => Status == EOrderStatus.Pending;
 
         public Order Clone()

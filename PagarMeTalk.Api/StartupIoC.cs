@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using PagarMeTalk.Api.AutoMapper;
 using PagarMeTalk.Api.Repositories;
 using PagarMeTalk.Api.Services;
+using PagarMeTalk.Api.Shared;
 
 namespace PagarMeTalk.Api
 {
@@ -19,6 +21,9 @@ namespace PagarMeTalk.Api
             services.AddAutoMapper(cfg => {
                 cfg.AddProfile<OrderProfile>();
             });
+
+            var builder = services.BuildServiceProvider();
+            GlobalMapper.Mapper = builder.GetService<IMapper>();
         }
     }
 }
